@@ -5,16 +5,8 @@ using namespace std;
 int main()
 {
     srand(10);
-    BinaryTree a;
-    for(int i = 0; i < 4; ++i)
-    {
-        cin >> a;
-    }
-    cout << a << "\n";
-
-    int data;
-    cin >> data;
-    a.remove(data);
+    BinaryTree a = {1, 2, 3, 4};
+    a.remove(3);
     cout << a << "\n";
     return 0;
 }

@@ -47,6 +47,7 @@ private:
 
 public:
     BinaryTree();
+    BinaryTree(std::initializer_list<int> list);
     BinaryTree(const BinaryTree & obj);
     BinaryTree(BinaryTree && other);
     ~BinaryTree();

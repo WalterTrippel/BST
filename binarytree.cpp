@@ -25,8 +25,6 @@ BinaryTree::TreeNode::TreeNode(TreeNode &&other):left(nullptr), right(nullptr), 
 
 BinaryTree::TreeNode::~TreeNode()
 {
-    delete left;
-    delete right;
     left = nullptr;
     right = nullptr;
 }
@@ -63,6 +61,14 @@ void BinaryTree::TreeNode::push(int data)
 
 BinaryTree::BinaryTree():root(nullptr)
 {
+}
+
+BinaryTree::BinaryTree(std::initializer_list<int> list):root(nullptr)
+{
+    for(unsigned i = 0; i < list.size(); ++i)
+    {
+        this->push(*(list.begin() + i));
+    }
 }
 
 BinaryTree::BinaryTree(const BinaryTree &obj)
@@ -216,7 +222,6 @@ void BinaryTree::remove(int data)
                 parent->right = curr->left;
             }
         }
-        curr = nullptr; // why delete curr makes a tricky stuff, dont understand
         delete curr;
         return;
     }
@@ -231,7 +236,7 @@ void BinaryTree::remove(int data)
         {
             parent->right = nullptr;
         }
-        curr = nullptr;
+        delete curr;
         return;
     }
 
@@ -242,7 +247,7 @@ void BinaryTree::remove(int data)
         if((ncurr->left == nullptr) && (ncurr->right == nullptr))
         {
             curr = ncurr;
-            ncurr = nullptr;
+            delete ncurr;
             curr->right = nullptr;
         }
         else
@@ -259,7 +264,7 @@ void BinaryTree::remove(int data)
                     lcurr = lcurr->left;
                 }
                 curr->data = lcurr->data;
-                lcurr = nullptr;
+                delete lcurr;
                 lcurrp->left = nullptr;
             }
             else
@@ -268,7 +273,7 @@ void BinaryTree::remove(int data)
                 tmp = curr->right;
                 curr->data = tmp->data;
                 curr->right = tmp->right;
-                tmp = nullptr;
+                delete tmp;
             }
         }
         return;
