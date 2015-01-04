@@ -6,14 +6,10 @@ BinaryTree::TreeNode::TreeNode():left(nullptr), right(nullptr), data(0)
 
 BinaryTree::TreeNode::TreeNode(int data):left(nullptr), right(nullptr), data(data)
 {
-
 }
 
-BinaryTree::TreeNode::TreeNode(const BinaryTree::TreeNode & obj)
+BinaryTree::TreeNode::TreeNode(const BinaryTree::TreeNode & obj):left(obj.left), right(obj.right), data(obj.data)
 {
-    this->left = obj.left;
-    this->right = obj.right;
-    this->data = obj.data;
 }
 
 BinaryTree::TreeNode::TreeNode(TreeNode &&other):left(nullptr), right(nullptr), data(0)
@@ -80,7 +76,7 @@ BinaryTree::BinaryTree(const BinaryTree &obj)
 BinaryTree::BinaryTree(BinaryTree &&other):root(nullptr)
 {
     copy(this->root, other.root);
-
+    //???
 }
 
 BinaryTree::~BinaryTree()
@@ -160,14 +156,156 @@ bool BinaryTree::isEmpty() const
     return this->root == nullptr ? true : false;
 }
 
+void BinaryTree::remove(int data)
+{
+    bool found = false;
+    if(isEmpty())
+    {
+        return;
+    }
+    TreeNode * curr;
+    TreeNode * parent;
+    curr = root;
+
+    while(curr != nullptr)
+    {
+        if(curr->data == data)
+        {
+            found = true;
+            break;
+        }
+        else
+        {
+            parent = curr;
+            if(data > curr->data)
+            {
+                curr = curr->right;
+            }
+            else
+            {
+                curr = curr->left;
+            }
+        }
+    }
+    if(!found)
+    {
+        throw BSTException();
+    }
+
+    if((curr->left == nullptr && curr->right != nullptr) || (curr->left != nullptr && curr->right == nullptr))
+    {
+        if(curr->left == nullptr && curr->right != nullptr)
+        {
+            if(parent->left == curr)
+            {
+                parent->left = curr->right;
+            }
+            else
+            {
+                parent->right = curr->right;
+            }
+        }
+        else
+        {
+            if(parent->left == curr)
+            {
+                parent->left = curr->left;
+            }
+            else
+            {
+                parent->right = curr->left;
+            }
+        }
+        curr = nullptr; // why delete curr makes a tricky stuff, dont understand
+        delete curr;
+        return;
+    }
+
+    if(curr->left == nullptr && curr->right == nullptr)
+    {
+        if(parent->left == curr)
+        {
+            parent->left = nullptr;
+        }
+        else
+        {
+            parent->right = nullptr;
+        }
+        curr = nullptr;
+        return;
+    }
+
+    if(curr->left != nullptr && curr->right != nullptr)
+    {
+        TreeNode * ncurr;
+        ncurr = curr->right;
+        if((ncurr->left == nullptr) && (ncurr->right == nullptr))
+        {
+            curr = ncurr;
+            ncurr = nullptr;
+            curr->right = nullptr;
+        }
+        else
+        {
+            if((curr->right)->left != nullptr)
+            {
+                TreeNode * lcurr;
+                TreeNode * lcurrp;
+                lcurrp = curr->right;
+                lcurr = (curr->right)->left;
+                while(lcurr->left != nullptr)
+                {
+                    lcurrp = lcurr;
+                    lcurr = lcurr->left;
+                }
+                curr->data = lcurr->data;
+                lcurr = nullptr;
+                lcurrp->left = nullptr;
+            }
+            else
+            {
+                TreeNode * tmp;
+                tmp = curr->right;
+                curr->data = tmp->data;
+                curr->right = tmp->right;
+                tmp = nullptr;
+            }
+        }
+        return;
+    }
+}
+
+BinaryTree::TreeNode * BinaryTree::findMin(TreeNode *node) const
+{
+    if(node == nullptr)
+    {
+        return nullptr;
+    }
+    if(node->left == nullptr)
+    {
+        return node;
+    }
+    return findMin(node->left);
+}
+
+BinaryTree & BinaryTree::operator = (const BinaryTree &obj)
+{
+    copy(this->root, obj.root);
+    return * this;
+}
+
+/** As said have no idea how it should be organized*/
+BinaryTree & BinaryTree::operator = (BinaryTree && other)
+{
+ //???
+}
+
 std::ostream & operator << (std::ostream & out, BinaryTree & obj)
 {
     BinaryTree::TreeNode * node = obj.rightMost(obj.root);
     obj.inorder(obj.root, node, out);
     return out;
 }
-
-
 
 std::istream & operator >> (std::istream & in, BinaryTree & obj)
 {

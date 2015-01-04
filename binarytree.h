@@ -4,6 +4,15 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <exception>
+
+class BSTException : public std::exception
+{
+    const char * what() const throw()
+    {
+        return "Element not found!";
+    }
+};
 
 class BinaryTree
 {
@@ -32,6 +41,8 @@ private:
 
     /** Detects rightmost node*/
     TreeNode * rightMost(TreeNode * node);
+    /** Detects min value node*/
+    TreeNode * findMin(TreeNode * node) const;
     void inorder(TreeNode * node, TreeNode * rightMost, std::ostream & out);
 
 public:
